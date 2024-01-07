@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.Optional;
 
 @RestController
@@ -32,7 +33,12 @@ class CashCardController {
     }
 
     @PostMapping
-    private ResponseEntity<Void> createCashCard() {
-        return null;
+    private ResponseEntity<Void> createCashCard(@RequestBody CashCard newCashCardRequest) {
+        CashCard savedCashCard = cashCardRepository.save(newCashCardRequest);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .header("Location", "/what/should/go/here?")
+                .build();
     }
 }

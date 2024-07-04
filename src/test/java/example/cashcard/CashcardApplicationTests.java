@@ -17,7 +17,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.annotation.DirtiesContext.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 class CashcardApplicationTests {
 
 	@Autowired
@@ -51,19 +50,18 @@ class CashcardApplicationTests {
 	}
 
 	@Test
+	@DirtiesContext
 	void shouldCreateANewCashCard() {
-		CashCard newCashCard = new CashCard(null, 250.00, "test_user");
+		CashCard newCashCard = new CashCard(null, 250.00, "sarah1");
 		ResponseEntity<Void> createResponse = restTemplate
 				.withBasicAuth("sarah1", "abc123")
 				.postForEntity("/cashcards", newCashCard, Void.class);
-
 		assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
 		URI locationOfNewCashCard = createResponse.getHeaders().getLocation();
 		ResponseEntity<String> getResponse = restTemplate
 				.withBasicAuth("sarah1", "abc123")
 				.getForEntity(locationOfNewCashCard, String.class);
-
 		assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
 		DocumentContext documentContext = JsonPath.parse(getResponse.getBody());
